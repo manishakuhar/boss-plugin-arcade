@@ -30,7 +30,7 @@ Run all checks and build the plugin without starting BOSS:
 
 The existing build supports either the local plugin API jar or `CI=true` with
 the pinned API release jar at `build/downloaded-deps/boss-plugin-api.jar`.
-The expanded run passed 100 tests, zero failures/errors/skips. Screen tests use
+The expanded run passed 102 tests, zero failures/errors/skips. Screen tests use
 fake services and real production composables; engine tests verify resize
 collision invariants and projected corner bounds. Screenshots are written to
 `build/responsive-screenshots/` and were visually inspected. The stronger 2048
@@ -48,3 +48,5 @@ running games between panes/windows, focus, density changes and restored
 layouts. Poker's real browser table, live multiplayer/network success and
 platform integration remain unverified. Other BOSS plugins are separate
 repositories and are not fixed by this change.
+
+Mirror Dash and Sky Stack clip their entire screen to its pane boundary. Pixel-level regressions render the real screens inside a contrasting host area, seed off-screen gates/fragments, and verify that no pixel outside the pane changes at density1 and2. This covers the native report of objects painting over the tab bar; cropped game-only screenshots had missed that boundary.
