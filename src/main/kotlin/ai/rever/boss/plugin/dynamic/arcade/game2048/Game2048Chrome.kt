@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -47,10 +49,19 @@ import androidx.compose.ui.unit.sp
 
 internal fun formatScore(value: Int): String = "%,d".format(value)
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-internal fun Game2048Header(state: Game2048ViewModel.UiState, onBack: () -> Unit) {
-    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        Column(Modifier.weight(1f)) {
+internal fun Game2048Header(
+    state: Game2048ViewModel.UiState,
+    onBack: () -> Unit,
+    compact: Boolean = false,
+) {
+    FlowRow(
+        Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        Column {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(
                     Modifier
@@ -67,7 +78,7 @@ internal fun Game2048Header(state: Game2048ViewModel.UiState, onBack: () -> Unit
                 Spacer(Modifier.widthIn(min = 6.dp))
                 Text(
                     "2048",
-                    fontSize = 40.sp,
+                    fontSize = if (compact) 28.sp else 40.sp,
                     fontWeight = FontWeight.ExtraBold,
                     color = ArcadeColors.Ink,
                 )
@@ -79,7 +90,6 @@ internal fun Game2048Header(state: Game2048ViewModel.UiState, onBack: () -> Unit
             )
         }
         ScoreChip(label = "SCORE", value = state.score, fx = state.fx)
-        Spacer(Modifier.widthIn(min = 8.dp))
         ScoreChip(label = "BEST", value = state.best)
     }
 }

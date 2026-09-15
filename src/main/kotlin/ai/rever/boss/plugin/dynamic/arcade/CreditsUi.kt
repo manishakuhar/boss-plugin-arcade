@@ -56,10 +56,18 @@ private fun creditsLabel(value: Long): String = "%,d ${CreditsService.GLYPH}".fo
  * and every game stays free.
  */
 @Composable
-fun CreditsChip(credits: CreditsService, onRequest: () -> Unit) {
+fun CreditsChip(credits: CreditsService, onRequest: () -> Unit, compact: Boolean = false) {
     val snap by credits.snapshot.collectAsState()
     val s = snap ?: return
     val pending = s.pendingRequest
+    if (compact) {
+        CasinoGhostButton(
+            text = "${creditsLabel(s.balance)} · " +
+                if (pending == null) "Top up" else "Pending ${"%,d".format(pending.amount)}",
+            onClick = onRequest,
+        )
+        return
+    }
     Box(
         modifier = Modifier
             .size(92.dp)
