@@ -107,7 +107,7 @@ fun MirrorDashScreen(
             @Suppress("UNUSED_EXPRESSION")
             frameTick // reading the tick invalidates this draw every frame
             viewModel.engine.resize(size.width / density, size.height / density)
-            drawMirrorDash(viewModel.engine, density)
+            drawMirrorDash(viewModel.engine, density * viewModel.engine.viewportScale)
         }
 
         MirrorDashHud(

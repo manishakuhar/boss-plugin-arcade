@@ -10,9 +10,12 @@ import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -152,6 +155,7 @@ private fun ScoreFloat(fx: Game2048ViewModel.MoveFx, modifier: Modifier = Modifi
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 internal fun BoxScope.Game2048Veil(
     state: Game2048ViewModel.UiState,
@@ -167,7 +171,7 @@ internal fun BoxScope.Game2048Veil(
         exit = fadeOut(tween(250)),
         modifier = Modifier.matchParentSize(),
     ) {
-        Box(
+        BoxWithConstraints(
             Modifier
                 .fillMaxSize()
                 .background(Color(0xFFFAEEE0).copy(alpha = 0.92f))
@@ -175,17 +179,21 @@ internal fun BoxScope.Game2048Veil(
             contentAlignment = Alignment.Center,
         ) {
             val isWin = lastVeil == Game2048ViewModel.Veil.WIN
+            val compact = maxWidth < 320.dp || maxHeight < 280.dp
             Column(
                 Modifier
+                    .widthIn(max = 350.dp)
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
                     .shadow(12.dp, RoundedCornerShape(18.dp))
                     .clip(RoundedCornerShape(18.dp))
                     .background(ArcadeColors.Chip)
-                    .padding(horizontal = 30.dp, vertical = 26.dp),
+                    .padding(horizontal = if (compact) 12.dp else 30.dp, vertical = if (compact) 12.dp else 26.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
                     if (isWin) "You hit 2048" else "Game over",
-                    fontSize = 30.sp,
+                    fontSize = if (compact) 22.sp else 30.sp,
                     fontWeight = FontWeight.ExtraBold,
                     color = ArcadeColors.Ink,
                 )
@@ -197,8 +205,12 @@ internal fun BoxScope.Game2048Veil(
                     color = ArcadeColors.InkSoft,
                     textAlign = TextAlign.Center,
                 )
-                Spacer(Modifier.height(18.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Spacer(Modifier.height(if (compact) 12.dp else 18.dp))
+                FlowRow(
+                    maxItemsInEachRow = if (compact) 1 else 2,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
                     ArcadePrimaryButton(
                         text = if (isWin) "New game" else "Try again",
                         onClick = { viewModel.newGame() },

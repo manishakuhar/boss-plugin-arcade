@@ -150,7 +150,7 @@ fun Game2048Screen(
                         Spacer(Modifier.height(8.dp))
                         hint()
                     }
-                    Game2048Board(state = state, viewModel = viewModel, boardSize = boardSize)
+                    Game2048Board(state = state, boardSize = boardSize)
                 }
             } else {
                 Column(
@@ -162,7 +162,7 @@ fun Game2048Screen(
                     controls()
                     if (boardSize >= 200.dp) {
                         Spacer(Modifier.height(12.dp))
-                        Game2048Board(state = state, viewModel = viewModel, boardSize = boardSize)
+                        Game2048Board(state = state, boardSize = boardSize)
                         Spacer(Modifier.height(14.dp))
                         hint()
                     }
@@ -177,6 +177,9 @@ fun Game2048Screen(
                     hoverColor = ArcadeColors.InkSoft,
                 ),
             )
+
+            // End-of-run actions belong to the visible pane, not the scrolled board.
+            Game2048Veil(state = state, viewModel = viewModel)
 
             if (showLeaderboard) {
                 LeaderboardOverlay(

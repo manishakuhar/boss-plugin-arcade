@@ -5,7 +5,7 @@ import ai.rever.boss.plugin.dynamic.arcade.LeaderboardService
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,6 +24,7 @@ import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -44,6 +45,7 @@ fun SkyStackScreen(
     val screenScope = rememberCoroutineScope()
     var frameTick by remember { mutableStateOf(0L) }
     val density = LocalDensity.current.density
+    val fontScale = LocalDensity.current.fontScale
 
     LaunchedEffect(Unit) {
         var last = 0L
@@ -105,7 +107,7 @@ fun SkyStackScreen(
         }
     }
 
-    Box(
+    BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
             .onPreviewKeyEvent { event ->
@@ -143,6 +145,7 @@ fun SkyStackScreen(
             drawSkyStack(
                 engine = viewModel.engine,
                 density = density,
+                fontScale = fontScale,
                 width = size.width / density,
                 height = size.height / density,
                 showMovingBlock = viewModel.phase == SkyStackViewModel.Phase.PLAYING ||
@@ -154,6 +157,7 @@ fun SkyStackScreen(
         if (!showTowerOverview) {
             SkyStackHud(
                 viewModel = viewModel,
+                compact = maxHeight < 420.dp,
                 onBack = onBack,
                 onLeaderboard = { showLeaderboard = true },
             )
@@ -162,6 +166,7 @@ fun SkyStackScreen(
         when {
             showTowerOverview -> SkyStackTowerOverviewControls(
                 score = viewModel.score,
+                paneTooSmall = skyStackOverviewViewport(maxWidth.value, maxHeight.value, viewModel.engine.level, fontScale) == null,
                 exportMessage = exportMessage,
                 onBack = { showTowerOverview = false },
                 onExportSvg = {

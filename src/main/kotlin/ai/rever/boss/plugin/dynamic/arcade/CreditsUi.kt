@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -134,6 +136,7 @@ fun CreditsChip(credits: CreditsService, onRequest: () -> Unit, compact: Boolean
  * start a run. The run has NOT begun; dismissing just returns to the game's
  * idle screen.
  */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun InsufficientCreditsCard(
     blocked: BlockedRun,
@@ -157,6 +160,7 @@ fun InsufficientCreditsCard(
                 .clip(RoundedCornerShape(18.dp))
                 .background(CasinoColors.Panel)
                 .plainClickable {}
+                .verticalScroll(rememberScrollState())
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -186,7 +190,8 @@ fun InsufficientCreditsCard(
                 Spacer(Modifier.height(12.dp))
                 CasinoGhostButton("Close", onClick = onDismiss)
             } else {
-                Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     CasinoPrimaryButton("Request credits", onClick = onRequest)
                     CasinoGhostButton("Not now", onClick = onDismiss)
                 }
@@ -196,6 +201,7 @@ fun InsufficientCreditsCard(
 }
 
 /** Amount + note dialog behind "Request credits", from the chip or the card. */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun RequestCreditsDialog(credits: CreditsService, onClose: () -> Unit) {
     var amount by remember { mutableStateOf("1000") }
@@ -218,6 +224,7 @@ fun RequestCreditsDialog(credits: CreditsService, onClose: () -> Unit) {
                 .clip(RoundedCornerShape(18.dp))
                 .background(CasinoColors.Panel)
                 .plainClickable {}
+                .verticalScroll(rememberScrollState())
                 .padding(24.dp),
         ) {
             Text(
@@ -247,7 +254,8 @@ fun RequestCreditsDialog(credits: CreditsService, onClose: () -> Unit) {
                 Text(message, fontSize = 12.sp, color = CasinoColors.Alert)
             }
             Spacer(Modifier.height(16.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 CasinoPrimaryButton(
                     text = if (busy) "Sending…" else "Send request",
                     enabled = !busy && (amount.toLongOrNull() ?: 0L) > 0L,
@@ -344,6 +352,7 @@ fun AdminCreditsOverlay(credits: CreditsService, onClose: () -> Unit) {
                 .clip(RoundedCornerShape(18.dp))
                 .background(CasinoColors.Panel)
                 .plainClickable {}
+                .verticalScroll(rememberScrollState())
                 .padding(20.dp),
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -389,7 +398,6 @@ fun AdminCreditsOverlay(credits: CreditsService, onClose: () -> Unit) {
                 )
 
                 else -> Column(
-                    modifier = Modifier.verticalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     rows.forEach { row ->
@@ -411,6 +419,7 @@ fun AdminCreditsOverlay(credits: CreditsService, onClose: () -> Unit) {
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun AdminRequestRow(
     row: CreditRequestRow,
@@ -452,8 +461,8 @@ private fun AdminRequestRow(
         )
         if (pending) {
             Spacer(Modifier.height(8.dp))
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
+            FlowRow(
+                verticalArrangement = Arrangement.spacedBy(6.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 CreditsTextField(

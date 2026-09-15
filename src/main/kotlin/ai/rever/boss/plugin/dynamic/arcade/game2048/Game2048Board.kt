@@ -28,13 +28,12 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 
 /**
- * The 4x4 board: static cells underneath, animated tiles on top, veil overlay last.
+ * The 4x4 board: static cells underneath, animated tiles on top. End-of-run actions are hosted by the screen.
  * Sizing follows the original CSS: gap = boardSize * 11/430, cell = (board - 5*gap)/4.
  */
 @Composable
 internal fun Game2048Board(
     state: Game2048ViewModel.UiState,
-    viewModel: Game2048ViewModel,
     boardSize: Dp,
 ) {
     BoxWithConstraints(
@@ -66,7 +65,6 @@ internal fun Game2048Board(
             }
         }
 
-        Game2048Veil(state = state, viewModel = viewModel)
     }
 }
 
