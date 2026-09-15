@@ -30,7 +30,7 @@ Run all checks and build the plugin without starting BOSS:
 
 The existing build supports either the local plugin API jar or `CI=true` with
 the pinned API release jar at `build/downloaded-deps/boss-plugin-api.jar`.
-The expanded run passed 102 tests, zero failures/errors/skips. Screen tests use
+The expanded run passed 108 tests, zero failures/errors/skips. Screen tests use
 fake services and real production composables; engine tests verify resize
 collision invariants and projected corner bounds. Screenshots are written to
 `build/responsive-screenshots/` and were visually inspected. The stronger 2048
@@ -49,4 +49,15 @@ layouts. Poker's real browser table, live multiplayer/network success and
 platform integration remain unverified. Other BOSS plugins are separate
 repositories and are not fixed by this change.
 
-Mirror Dash and Sky Stack clip their entire screen to its pane boundary. Pixel-level regressions render the real screens inside a contrasting host area, seed off-screen gates/fragments, and verify that no pixel outside the pane changes at density1 and2. This covers the native report of objects painting over the tab bar; cropped game-only screenshots had missed that boundary.
+All six native games and the shared credit overlays are constrained by the
+`ArcadeBackground` pane boundary. Mirror Dash and Sky Stack also retain their
+own root clips. Pixel regressions render all six real screens in an inset pane
+surrounded by a contrasting host area at simulated density 1 and 2. They check
+initial content, 2048 merge/win transitions, Wordle input/rejection animation,
+Typing DONE, Battleship's opponent picker, shared credit dialogs, and an
+explicit oversized-child paint probe. Existing direct canvas tests retain
+seeded offscreen gates/fragments. Removing only the shared clip caused the
+actual 2048 win transition to paint 4,920 pixels outside its pane at density 1;
+the corrected suite passes. These surrounding-pixel assertions test containment
+that cropped game-only screenshots cannot establish. They do not replace
+physical-display or live host checks.
